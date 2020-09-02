@@ -1,0 +1,6 @@
+FROM ubuntu
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y bowtie2 samtools
+ADD ./bowtie2alignment.sh /usr/local/bin/bowtie2alignment.sh
+RUN chmod +x /usr/local/bin/bowtie2alignment.sh
+CMD ["/usr/local/bin/bowtie2alignment.sh"] 
