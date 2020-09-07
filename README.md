@@ -72,8 +72,20 @@ Usage
 		-o	output sorted bam filename
 
 
-sudo docker run -i bowtie2align -s SAMPLENAME -r reference.fasta -1 sample_R1.faastq.gz -2 sample_R2.fastq.gz -o sample_sorted.bam
 ```
+
+Now, run bowtie2 alignment
+
+```
+sudo docker run --rm -v /home/shrestha/Downloads:/myvol  -w /myvol -i bowtie2align bowtie2alignment -s test -r Arabidopsis_thaliana.TAIR10.dna.chromosome.3.fa -1 TestDataSet_R1.fastq -2 TestDataSet_R2.fastq -o Testalign_sorted.bam
+```
+Options explaination:
+
+--rm	removes the container after the execution completes
+-v	mounts the directory /home/shrestha/Downloads/ to a docker volumn named /myvol
+-w	go to the working directory /myvol which is the Downloads folder we have mounted.
+
+All our input and output files are now in /myvol so, we don't have to give fullpath to the input/output files. The output files will be in the Downloads folder, no matter whereever you are when  you run the docker command to align reads.
  
 
 
