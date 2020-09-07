@@ -21,10 +21,15 @@ do
 		1) R1=$OPTARG;;
 		2) R2=$OPTARG;;
 		o) output=$OPTARG;;
-		h) usage;;
+		h) usage; exit 0;;
 	esac
 
 done
+
+if [ "$1" == "" ]; then
+	usage
+	exit 0
+fi	
 
 echo "You supplied following :"
 echo "Sample name "$sample
