@@ -49,6 +49,31 @@ sudo docker run -t dsamtools samtools
 sudo docker run -t dsamtools samtools view sample.bam
 sudo docker run -t dsamtools samtools sort -o out_sorted.bam sample.bam
 ```
+
+## Creating docker image for bowtie2 alignment
+
+To create an image
+
+```
+sudo docker build -t bowtie2align bowtie2alignment
+```
+
+To run the image
+```
+sudo docker run -i bowtie2align 
+
+Bash program to align short paired end reads to a reference sequence using bowtie2
+----------------------------------------------------------------------------------
+Usage
+		-s	sample name
+		-r	reference fasta file
+		-1	forward reads R1
+		-2	reverse reads R2
+		-o	output sorted bam filename
+
+
+sudo docker run -i bowtie2align -s SAMPLENAME -r reference.fasta -1 sample_R1.faastq.gz -2 sample_R2.fastq.gz -o sample_sorted.bam
+```
  
 
 
