@@ -41,9 +41,9 @@ echo Output bam file name $output
 
 echo Building the reference index now
 
-bowtie2-build -f $reference
+bowtie2-build -f $reference $reference
 echo Building reference index completed.
 
 echo Running bowtie2 alignment now
 
-bowtie2  --no-discordant  --no_unl --rg-id $sample --rg SM:$sample --rg LB:NA --rg PL:Illumina  -x $reference -1 ${R1} -2 ${R2} | samtools view -hbS | samtools sort -o ${output} && samtools index ${output}
+bowtie2  --no-discordant  --no-unal --rg-id $sample --rg SM:$sample --rg LB:NA --rg PL:Illumina  -x $reference -1 ${R1} -2 ${R2} | samtools view -hbS | samtools sort -o ${output} && samtools index ${output}
