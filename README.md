@@ -110,7 +110,7 @@ Here, I have mounted my directory /home/shrestha to docker virtual directory /my
 
 -i is the image name
 
-After that the snakemake command begins. First argument <all> tells to run all the rules. There are rules for each step in the pipeline. Other rules are:
+After that the snakemake command begins. First argument **all** tells to run all the rules. There are rules for each step in the pipeline. Other rules are:
 1) qualtrim 	# quality trim using trimmomatic
 2) alignment	# alignment using bowtie2
 3) snpcall	# snpcall using samtools and bcftools
