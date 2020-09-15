@@ -1,0 +1,13 @@
+FROM ubuntu
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y snakemake trimmomatic bowtie2 samtools bcftools
+
+ADD ./trimmomatic.sh /usr/local/bin/runtrimmomatic
+ADD ./bowtie2alignment.sh /usr/local/bin/runalignment
+ADD ./snpcall.sh /usr/local/bin/runsnpcall
+ADD ./snpcall.snakemake /usr/local/bin/snpcall.smk
+
+RUN chmod +x /usr/local/bin/runtrimmomatic /usr/local/bin/runalignment /usr/local/bin/runsnpcall
+
+CMD ["snakemake", "TrimmomaticPE", "bowtie2-build", "bowtie2", "samtools", "bcftools"]

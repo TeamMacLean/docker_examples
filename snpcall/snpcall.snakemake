@@ -1,0 +1,62 @@
+#!/usr/bin/env snakemake
+
+outputdir=config["outputdir"].rstrip("/")
+R1=config["R1"]
+R2=config["R2"]
+reference=config["reference"]
+outputvcf=config["outputvcf"]
+samplename=config["samplename"]
+threads=config["threads"]
+
+print("You provided following arguments\n" )
+print("output folder name %s" %outputdir)
+print("Input R1 reads file %s" %R1)
+print("Input R2 reads file %s" %R2)
+print("Reference fasta file %s" %reference)
+print("output VCF filename %s" %outputvcf)
+print("Sample name %s" %samplename)
+
+rule all:
+    input: outputdir + "/snpcall/" + samplename + "_snpcall.vcf"
+
+rule qualtrim:
+    input:
+        r1 = R1,
+        r2 = R2
+    output:
+        outr1 = outputdir + "/trimmomatic/" + samplename + "_1_paired.fastq.gz",
+        outr2 = outputdir + "/trimmomatic/" + samplename + "_2_paired.fastq.gz"
+    log: outputdir + "/logs/trimmomatic.log"
+    message: "Running trimmomatic "
+    shell: "runtrimmomatic -d " + outputdir + "/trimmomatic -o " + samplename + " -1 {input.r1}  -2 {input.r2} -l 30 -q 20 -w 5 -t " + str(threads)
+
+
+rule refindex:
+    input: reference
+    output:
+        reference + "1.bt2",
+        reference + "2.bt2",
+        reference + "3.bt2",
+        reference + "4.bt2",
+        reference + "rev.1.bt2",
+        reference + "rev.2.bt2",
+    shell: "bowtie2-build -f {input} {input}"
+
+rule alignment:
+    input:
+        R1 = outputdir + "/trimmomatic/" + samplename + "_1_paired.fastq.gz",
+        R2 = outputdir + "/trimmomatic/" + samplename + "_2_paired.fastq.gz"
+    output: outputdir + "/alignment/" + samplename + "_sorted.bam"
+    message: "Running Bowtie Alignement"
+    log: outputdir + "/logs/alignment.log"  
+    params: outname=samplename + "_sorted.bam"
+    shell: "runalignment -d {outputdir}/alignment -o {params.outname}  -s {samplename} -r {reference} -1 {input.R1} -2 {input.R2}"
+
+rule snpcall:
+    input: outputdir + "/alignment/" + samplename + "_sorted.bam"
+    output: outputdir + "/snpcall/" + samplename + "_snpcall.vcf"
+    message: "Running SNPcall for sample " + samplename
+    log: outputdir + "/logs/snpcall.log"
+    params: outname= samplename + "_snpcall.vcf"
+    shell: "runsnpcall -r {reference}  -d {outputdir}/snpcall  -o {params.outname}   -i {input} -t " + str(threads)
+
