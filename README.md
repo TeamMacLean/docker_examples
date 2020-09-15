@@ -88,5 +88,37 @@ Options explaination:
 All our input and output files are now in /myvol so, we don't have to give fullpath to the input/output files. The output files will be in the Downloads folder, no matter whereever you are when  you run the docker command to align reads.
  
 
+Snakemake SNPcall pipeline using docker
+
+A snakemake workflow for snpcall is available here. The docker file for snpcall pipeline is: snpcall/dockerfile
+
+To build image for snpcall
+```
+sudo docker build -t snpcall ./snpcall
+```
+
+This will build ubuntu image with snakemake, samtools, bcftools, trimmomatic and bowtie2 installed.
+
+To run, the image, an example command is below:
+```
+sudo docker run  --rm -v /home/shrestha:/mydir -w /mydir -i snpcall snakemake all -s /usr/local/bin/snpcall.smk --config reference=Downloads/Arabidopsis_thaliana.TAIR10.dna.chromosome.3.fa R1=Downloads/TestDataSet_R1.fastq R2=Downloads/TestDataSet_R2.fastq outputdir=snpcalltest samplename=Test threads=2 outputvcf=Test.vcf  --latency-wait=30
+```
+
+Here, I have mounted my directory /home/shrestha to docker virtual directory /mydir.
+
+-w option says to go to the virtual directory /mydir
+
+-i is the image name
+
+After that the snakemake command begins. First argument <all> tells to run all the rules. There are rules for each step in the pipeline. Other rules are:
+1) qualtrim 	# quality trim using trimmomatic
+2) alignment	# alignment using bowtie2
+3) snpcall	# snpcall using samtools and bcftools
+
+Therefore, instead of the rule all, I can use qualtrim to run trimmomatic only, or use alignment to run bowtie2 alignment only.
+
+-s option is for passing the snakemake script file. The script path is fixed here while building docker image as the script was copied to that path.
+
+--config option is used for parsing the inputs, outputs and other options. Here I am passing the reference sequence, R1 reads, R2 reads, output directory name, samplename, number of threads to use and output vcf filename.
 
 
